@@ -1,7 +1,4 @@
-"""
-AI Chatbot Application
-Entry point for the Flask application
-"""
+
 import os
 from app import create_app
 
