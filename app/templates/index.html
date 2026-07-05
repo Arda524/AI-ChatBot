@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant - Intelligent Chat</title>
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader">
+            <div class="loader-spinner"></div>
+            <p>Loading AI Assistant...</p>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-robot"></i>
+                    <span>AI Assistant</span>
+                </div>
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <button class="new-chat-btn" onclick="startNewChat()">
+                <i class="fas fa-plus-circle"></i>
+                <span>New Conversation</span>
+            </button>
+            
+            <div class="sidebar-nav">
+                <button class="nav-btn active" data-tab="history">
+                    <i class="fas fa-history"></i>
+                    <span>Chat History</span>
+                </button>
+                <button class="nav-btn" data-tab="stats">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Statistics</span>
+                </button>
+                <button class="nav-btn" data-tab="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </button>
+            </div>
+            
+            <div class="sidebar-content">
+                <!-- Chat History Tab -->
+                <div class="tab-content active" id="historyTab">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search conversations..." id="searchChats">
+                    </div>
+                    <div class="chat-history-list" id="chatHistoryList">
+                        <!-- Dynamically loaded -->
+                    </div>
+                </div>
+                
+                <!-- Statistics Tab -->
+                <div class="tab-content" id="statsTab">
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h4>Total Messages</h4>
+                                <p id="totalMessages">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h4>Session Time</h4>
+                                <p id="sessionTime">00:00</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h4>AI Responses</h4>
+                                <p id="aiResponses">0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Settings Tab -->
+                <div class="tab-content" id="settingsTab">
+                    <div class="settings-container">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Voice Output</h4>
+                                <p>Read responses aloud</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="ttsToggle" onchange="toggleTTS()">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Dark Mode</h4>
+                                <p>Toggle dark/light theme</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Show Timestamps</h4>
+                                <p>Display message times</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="timestampToggle" onchange="toggleTimestamps()" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <button class="danger-btn" onclick="clearHistory()">
+                        <i class="fas fa-trash-alt"></i>
+                        <span>Clear All History</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-details">
+                        <h4>Guest User</h4>
+                        <p>Session: <span id="sessionId">---</span></p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="chat-header">
+                <button class="menu-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-info">
+                    <div class="header-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div>
+                        <h1>AI Assistant</h1>
+                        <div class="status-indicator">
+                            <span class="status-dot online"></span>
+                            <span>Online</span>
+                            <span class="response-badge">GPT-4</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="header-btn" onclick="exportChat()" title="Export Chat">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="header-btn" onclick="toggleFullscreen()" title="Fullscreen">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                    <button class="header-btn" id="voiceBtn" onclick="toggleVoice()" title="Voice Input">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Chat Messages -->
+            <div class="chat-messages" id="chatMessages">
+                <!-- Welcome Screen -->
+                <div class="welcome-screen" id="welcomeScreen">
+                    <div class="welcome-animation">
+                        <div class="floating-robot">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                    </div>
+                    <h2>Welcome to AI Assistant</h2>
+                    <p class="welcome-subtitle">Your intelligent companion powered by GPT-4</p>
+                    
+                    <div class="feature-cards">
+                        <div class="feature-card">
+                            <i class="fas fa-brain"></i>
+                            <h3>Smart AI</h3>
+                            <p>Advanced natural language understanding</p>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-bolt"></i>
+                            <h3>Fast Responses</h3>
+                            <p>Quick and accurate answers</p>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-shield-alt"></i>
+                            <h3>Secure</h3>
+                            <p>Your data is private and secure</p>
+                        </div>
+                    </div>
+                    
+                    <div class="suggestion-chips">
+                        <h3>Try asking me:</h3>
+                        <div class="chips-container">
+                            <button class="chip" onclick="sendQuickMessage('What can you help me with?')">
+                                <i class="fas fa-question-circle"></i>
+                                What can you do?
+                            </button>
+                            <button class="chip" onclick="sendQuickMessage('Tell me about your pricing plans')">
+                                <i class="fas fa-tag"></i>
+                                Pricing Plans
+                            </button>
+                            <button class="chip" onclick="sendQuickMessage('How do I contact support?')">
+                                <i class="fas fa-headset"></i>
+                                Contact Support
+                            </button>
+                            <button class="chip" onclick="sendQuickMessage('What are your business hours?')">
+                                <i class="fas fa-clock"></i>
+                                Business Hours
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="chat-input-area">
+                <div class="input-container">
+                    <button class="input-action-btn" onclick="attachFile()" title="Attach File">
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                    <div class="textarea-wrapper">
+                        <textarea 
+                            id="messageInput" 
+                            placeholder="Type your message here..." 
+                            rows="1"
+                            maxlength="500"
+                            onkeydown="handleKeyPress(event)"
+                            oninput="autoResize(this); updateCharCount()"
+                        ></textarea>
+                    </div>
+                    <div class="input-actions">
+                        <span class="char-counter" id="charCounter">0/500</span>
+                        <button class="send-btn" id="sendBtn" onclick="sendMessage()" disabled>
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="input-footer">
+                    <span class="typing-hint">
+                        <i class="fas fa-info-circle"></i>
+                        Press Enter to send, Shift + Enter for new line
+                    </span>
+                    <span class="model-badge">GPT-4</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <!-- Voice Recording Overlay -->
+    <div class="voice-overlay" id="voiceOverlay">
+        <div class="voice-indicator">
+            <div class="voice-waves">
+                <span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <p>Listening...</p>
+            <button class="voice-cancel-btn" onclick="stopRecording()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
