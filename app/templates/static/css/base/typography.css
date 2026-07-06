@@ -1,0 +1,14 @@
+body {
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+h1 { font-size: 18px; font-weight: 600; }
+h2 { font-size: 32px; font-weight: 700; }
+h3 { font-size: 16px; }
+h4 { font-size: 14px; font-weight: 600; }
+
+.text-secondary { color: var(--text-secondary); }
+.text-muted { color: var(--text-muted); }
+.text-sm { font-size: 12px; }
+.text-xs { font-size: 10px; }

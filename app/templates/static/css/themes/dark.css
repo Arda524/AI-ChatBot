@@ -1,0 +1,10 @@
+[data-theme="dark"], :root {
+    --bg-primary: #0F0F1A;
+    --bg-secondary: #1A1A2E;
+    --bg-tertiary: #252542;
+    --bg-hover: #2D2D4A;
+    --text-primary: #FFFFFF;
+    --text-secondary: #A0A0B0;
+    --text-muted: #6C6C80;
+    --border-color: #2D2D4A;
+}

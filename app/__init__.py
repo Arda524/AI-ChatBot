@@ -10,7 +10,7 @@ def create_app(config_name=None):
     # Fix: Use correct template folder path
     app = Flask(__name__, 
                 template_folder='templates',      # Relative to app/
-                static_folder='../static')        # Go up one level to chatbot/static
+                static_folder='templates/static')        # Go up one level to chatbot/static
     
     app.config.from_object(config[config_name])
     init_extensions(app)
