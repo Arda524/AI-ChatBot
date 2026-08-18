@@ -1,6 +1,8 @@
+
 import sqlite3
 from datetime import datetime
 from contextlib import contextmanager
+
 
 class ChatDatabase:
     """Database manager for chat history"""
@@ -22,18 +24,14 @@ class ChatDatabase:
     def _init_db(self):
         """Initialize database tables"""
         with self._get_connection() as conn:
-            cursor = conn.cursor()
-            
-            # Create tables
-            cursor.executescript('''
+            conn.executescript('''
                 CREATE TABLE IF NOT EXISTS chat_messages (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     user_id TEXT NOT NULL,
                     role TEXT NOT NULL CHECK (role IN ('user', 'assistant')),
                     content TEXT NOT NULL,
                     source TEXT DEFAULT 'user',
-                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    FOREIGN KEY (user_id) REFERENCES user_sessions(user_id)
+                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
                 );
                 
                 CREATE TABLE IF NOT EXISTS user_sessions (
@@ -49,21 +47,17 @@ class ChatDatabase:
                 CREATE INDEX IF NOT EXISTS idx_user_role 
                 ON chat_messages(user_id, role);
             ''')
-            
             conn.commit()
     
     def save_message(self, user_id, role, content, source='user'):
-        """Save a message to the database"""
+        """Save a message"""
         with self._get_connection() as conn:
-            cursor = conn.cursor()
-            
-            cursor.execute('''
+            conn.execute('''
                 INSERT INTO chat_messages (user_id, role, content, source)
                 VALUES (?, ?, ?, ?)
             ''', (user_id, role, content, source if role == 'user' else 'bot'))
             
-            # Update session
-            cursor.execute('''
+            conn.execute('''
                 INSERT OR REPLACE INTO user_sessions (user_id, last_active)
                 VALUES (?, ?)
             ''', (user_id, datetime.now()))
@@ -71,11 +65,9 @@ class ChatDatabase:
             conn.commit()
     
     def get_chat_history(self, user_id, limit=50):
-        """Retrieve chat history"""
+        """Get chat history"""
         with self._get_connection() as conn:
-            cursor = conn.cursor()
-            
-            cursor.execute('''
+            cursor = conn.execute('''
                 SELECT role, content, source, timestamp
                 FROM chat_messages
                 WHERE user_id = ?
@@ -86,32 +78,8 @@ class ChatDatabase:
             return [dict(row) for row in cursor.fetchall()]
     
     def clear_history(self, user_id):
-        """Clear chat history for a user"""
+        """Clear chat history"""
         with self._get_connection() as conn:
-            cursor = conn.cursor()
-            
-            cursor.execute('DELETE FROM chat_messages WHERE user_id = ?', (user_id,))
-            cursor.execute('DELETE FROM user_sessions WHERE user_id = ?', (user_id,))
-            
+            conn.execute('DELETE FROM chat_messages WHERE user_id = ?', (user_id,))
+            conn.execute('DELETE FROM user_sessions WHERE user_id = ?', (user_id,))
             conn.commit()
-    
-    def get_user_stats(self, user_id):
-        """Get user statistics"""
-        with self._get_connection() as conn:
-            cursor = conn.cursor()
-            
-            cursor.execute('''
-                SELECT 
-                    COUNT(*) as total_messages,
-                    COUNT(CASE WHEN role = 'user' THEN 1 END) as user_messages,
-                    COUNT(CASE WHEN role = 'assistant' THEN 1 END) as bot_messages,
-                    MIN(timestamp) as first_message,
-                    MAX(timestamp) as last_message
-                FROM chat_messages
-                WHERE user_id = ?
-            ''', (user_id,))
-            
-            row = cursor.fetchone()
-            if row and row['total_messages'] > 0:
-                return dict(row)
-            return None

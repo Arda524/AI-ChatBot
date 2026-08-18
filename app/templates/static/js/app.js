@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
     chatApp = new ChatApp();
 });
 
-// Global functions for HTML onclick handlers
 window.sendMessage = (message) => chatApp?.sendMessage(message);
 window.sendQuickMessage = (message) => chatApp?.sendMessage(message);
 window.handleKeyPress = (e) => chatApp?.handleKeyPress(e);

@@ -11,16 +11,13 @@ import { isValidMessage, sanitizeInput } from '../utils/validators.js';
 
 export class ChatApp {
     constructor() {
-        // Core
         this.eventBus = new EventBus();
         
-        // DOM Elements
         this.messageInput = getById('messageInput');
         this.chatMessages = getById('chatMessages');
         this.sendBtn = getById('sendBtn');
         this.loadingScreen = getById('loadingScreen');
         
-        // Modules
         this.messages = new MessageModule(this.chatMessages, this.eventBus);
         this.voice = new VoiceModule(this.eventBus);
         this.history = new HistoryModule(this.eventBus);
@@ -28,32 +25,26 @@ export class ChatApp {
         this.notifications = new NotificationModule();
         this.sidebar = new SidebarModule();
         
-        // State
         this.sessionStartTime = new Date();
         
         this.init();
     }
     
     init() {
-        // Hide loading screen
         setTimeout(() => this.loadingScreen?.classList.add('hidden'), 1000);
         
-        // Event listeners
         this.sendBtn?.addEventListener('click', () => this.sendMessage());
         this.messageInput?.addEventListener('input', () => this.updateSendButton());
         this.messageInput?.addEventListener('keydown', (e) => this.handleKeyPress(e));
         
-        // Event bus listeners
         this.eventBus.on('voiceMessage', (text) => this.sendMessage(text));
         this.eventBus.on('messageAdded', () => this.updateStats());
         
-        // Initialize modules
         this.loadChatHistory();
         this.settings.load();
         this.sidebar.initTabs();
         this.updateSessionTimer();
         
-        // Focus input
         setTimeout(() => this.messageInput?.focus(), 1500);
     }
     
@@ -63,7 +54,6 @@ export class ChatApp {
         
         if (!isValidMessage(sanitized) || this.sendBtn?.disabled) return;
         
-        // Clear input
         if (!message) {
             this.messageInput.value = '';
             this.updateSendButton();
@@ -166,7 +156,6 @@ export class ChatApp {
         }, 1000);
     }
     
-    // Exposed methods for global functions
     toggleVoice() { this.voice.toggle(); }
     stopRecording() { this.voice.stopRecording(); }
     toggleSidebar() { this.sidebar.toggle(); }

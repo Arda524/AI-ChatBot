@@ -1,8 +1,15 @@
+
 from flask_cors import CORS
 
-# Initialize extensions
 cors = CORS()
 
+
 def init_extensions(app):
-    """Initialize Flask extensions"""
-    cors.init_app(app)
+    """Initialize all Flask extensions"""
+    cors.init_app(app, resources={
+        r"/api/*": {
+            "origins": app.config.get('CORS_ORIGINS', '*'),
+            "methods": ["GET", "POST", "DELETE"],
+            "allow_headers": ["Content-Type"]
+        }
+    })

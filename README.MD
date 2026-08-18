@@ -82,7 +82,7 @@ http://127.0.0.1:5000/
 ## Project structure
 
 - `app/` - Flask application package
-  - `api/` - Blueprint routes for chat, history, and TTS
+  - `api/` - Blueprint routes for chat, history, TTS, and health checks
   - `models/` - Database models and persistence logic
   - `services/` - Chat processing, FAQ matching, and context management
   - `templates/` - HTML templates
@@ -90,7 +90,14 @@ http://127.0.0.1:5000/
   - `utils/` - Session and input validation helpers
 - `app.py` - Application entry point
 - `config.py` - Environment-based configuration
-- `requirements.txt` - Python dependencies
+- `requirements.txt` - Python dependencies for development
+- `requirements-prod.txt` - Production dependency list
+- `Dockerfile` - Container build instructions
+- `docker-compose.yml` - Service definition for local deployment
+- `Procfile` - Deployment process entry for platforms like Heroku
+- `runtime.txt` - Python runtime version for platform deployment
+- `wsgi.py` - WSGI application entrypoint for production servers
+- `tests/` - Automated test suite
 
 ## Notes
 

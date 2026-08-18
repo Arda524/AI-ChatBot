@@ -1,8 +1,10 @@
+
 from datetime import datetime
 from collections import OrderedDict
 
+
 class ContextService:
-    """Manage conversation context (short-term memory)"""
+    """Manage conversation context"""
     
     def __init__(self, max_messages=20):
         self.max_messages = max_messages
@@ -12,29 +14,25 @@ class ContextService:
         """Get recent conversation context"""
         if user_id not in self._contexts:
             self._contexts[user_id] = []
-        
-        context = self._contexts[user_id]
-        return context[-max_messages:] if context else []
+        return self._contexts[user_id][-max_messages:]
     
     def add_message(self, user_id, role, content):
-        """Add a message to context"""
+        """Add message to context"""
         if user_id not in self._contexts:
             self._contexts[user_id] = []
         
-        message = {
+        self._contexts[user_id].append({
             "role": role,
             "content": content,
             "timestamp": datetime.now().isoformat()
-        }
+        })
         
-        self._contexts[user_id].append(message)
-        
-        # Trim old messages if exceeding max
+        # Trim old messages
         if len(self._contexts[user_id]) > self.max_messages:
             self._contexts[user_id] = self._contexts[user_id][-self.max_messages:]
     
     def clear_context(self, user_id):
-        """Clear context for a user"""
+        """Clear context"""
         if user_id in self._contexts:
             self._contexts[user_id] = []
     

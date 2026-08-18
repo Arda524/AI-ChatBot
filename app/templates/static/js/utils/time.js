@@ -1,4 +1,3 @@
-// Time Utility Functions
 export const getCurrentTime = () => {
     return new Date().toLocaleTimeString('en-US', {
         hour: '2-digit',

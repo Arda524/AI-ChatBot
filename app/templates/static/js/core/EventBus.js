@@ -1,4 +1,3 @@
-// Simple Event Bus for module communication
 export class EventBus {
     constructor() {
         this.events = {};

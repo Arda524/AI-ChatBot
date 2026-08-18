@@ -1,29 +1,39 @@
-# Python
+
 __pycache__/
 *.py[cod]
+*$py.class
 *.so
 *.egg-info/
 dist/
 build/
+*.egg
 
-# Virtual Environment
 venv/
 env/
-.env
+.venv/
 
-# Database
+.env
+!.env.example
+
 *.db
 *.sqlite3
 
-# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
 
-# OS
 .DS_Store
 Thumbs.db
+Desktop.ini
 
-# Logs
+logs/
 *.log
+!logs/.gitkeep
+
+.pytest_cache/
+.coverage
+htmlcov/
+
+.dockerignore

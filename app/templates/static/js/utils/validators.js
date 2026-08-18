@@ -1,4 +1,3 @@
-// Input Validation Utilities
 export const MAX_MESSAGE_LENGTH = 500;
 
 export const isValidMessage = (text) => {

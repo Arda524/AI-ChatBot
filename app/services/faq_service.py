@@ -1,7 +1,7 @@
+
 class FAQService:
     """Handle FAQ detection and responses"""
     
-    # FAQ Categories with keywords and responses
     FAQ_DATA = {
         'greeting': {
             'keywords': ['hello', 'hi', 'hey', 'greetings', 'good morning', 'good afternoon'],
@@ -53,7 +53,6 @@ class FAQService:
                     break
         
         if matches:
-            # Return highest priority match
             matches.sort(key=lambda x: x[1])
             return matches[0][0]
         
@@ -61,12 +60,7 @@ class FAQService:
     
     @classmethod
     def get_response(cls, intent):
-        """Get FAQ response for detected intent"""
+        """Get FAQ response"""
         if intent and intent in cls.FAQ_DATA:
             return cls.FAQ_DATA[intent]['response']
         return None
-    
-    @classmethod
-    def is_faq(cls, message):
-        """Check if message matches any FAQ"""
-        return cls.detect_intent(message) is not None
